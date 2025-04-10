@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1094168299826",
+    "project_id": "travel-app-cgp",
+    "storage_bucket": "travel-app-cgp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094168299826:android:18c47cdb63d25d92b3af2b",
+        "android_client_info": {
+          "package_name": "com.example.newone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG6LzzoF9t8gwXlhGD1yXKwcmnqMGXuXM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
