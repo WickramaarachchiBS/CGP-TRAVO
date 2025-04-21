@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:newone/screens/district_items_screen.dart';
-import 'package:newone/Data/Place.dart';
-import 'package:newone/Data/D';
+// import 'package:newone/Data/Place.dart';
+import 'package:newone/Data/Districts.dart';
 
 class AllPlacesScreen extends StatefulWidget {
   const AllPlacesScreen({super.key});
@@ -31,7 +31,7 @@ class _AllPlacesScreenState extends State<AllPlacesScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Places(district: district),
+                  builder: (context) => DistrictItemsScreen(district: district.name),
                 ),
               );
             },
