@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:newone/screens/district_items_screen.dart';
 import 'package:newone/Data/Place.dart';
+import 'package:newone/Data/D';
 
 class AllPlacesScreen extends StatefulWidget {
   const AllPlacesScreen({super.key});
