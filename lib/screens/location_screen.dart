@@ -65,7 +65,7 @@ class _LocationScreenState extends State<LocationScreen> {
               height: boxHeight,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(widget.imagePath),
+                  image: NetworkImage(widget.imagePath),
                   fit: BoxFit.cover,
                 ),
                 boxShadow: const [
