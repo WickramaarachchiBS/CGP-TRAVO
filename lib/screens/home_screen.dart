@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:newone/screens/location_screen.dart';
@@ -5,6 +6,7 @@ import 'package:newone/services/locationServices.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:newone/Data/Popular.dart';
 import 'package:newone/Data/Popular.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -114,9 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildCategoryItem("Hotels", Icons.hotel, "/allHotels"),
                   _buildCategoryItem("Places", Icons.place, "/allPlaces"),
-                  _buildCategoryItem("Cities", Icons.location_city, "/allPlaces"),
+                  _buildCategoryItem("Hotels", Icons.hotel, "/allHotels"),
+                  _buildCategoryItem("Schedule", Icons.schedule, "/schedule"),
                 ],
               ),
               const SizedBox(height: 20),
@@ -132,57 +134,90 @@ class _HomeScreenState extends State<HomeScreen> {
               // Popular Places List
               Expanded(
                 child: SizedBox(
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: Popular.places.length,
-                    itemBuilder: (context, index) {
-                      final place = Popular.places[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LocationScreen(
-                                place: place.name,
-                                imagePath: place.imagePath,
-                                latLon: "${place.location.latitude}, ${place.location.longitude}",
-                              ),
-                            ),
-                          );
-                          print("Tapped on ${place.location}");
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(right: 0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 5,
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                                child: Image.asset(place.imagePath, height: 120, width: double.infinity, fit: BoxFit.cover),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(8.0),
+                  height: 200.0,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance.collection('popular').snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text("Error: ${snapshot.error}"));
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      final popularPlaces = snapshot.data!.docs.map((doc) => Popular.fromFirestore(doc.data() as Map<String, dynamic>)).toList();
+
+                      return SizedBox(
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: popularPlaces.length,
+                          itemBuilder: (context, index) {
+                            final popular = popularPlaces[index];
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LocationScreen(
+                                      place: popular.name,
+                                      imagePath: popular.imagePath,
+                                      latLon: "${popular.latitude}, ${popular.longitude}",
+                                    ),
+                                  ),
+                                );
+                                print("Tapped on ${popular.name}");
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 5,
+                                    ),
+                                  ],
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(place.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                    SizedBox(height: 4),
-                                    Text("${place.distance} km", style: TextStyle(color: Colors.grey)),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                                      child: CachedNetworkImage(
+                                        imageUrl: popular.imagePath,
+                                        height: 120,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) => Container(
+                                          height: 120,
+                                          color: Colors.grey,
+                                          child: Center(child: Text('Image not found')),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            popular.name,
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            "${popular.distance} km",
+                                            style: TextStyle(color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                       );
                     },

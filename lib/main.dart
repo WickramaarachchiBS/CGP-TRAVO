@@ -5,6 +5,7 @@ import 'package:newone/screens/filter_by_district_screen.dart';
 import 'package:newone/screens/home_screen.dart';
 import 'package:newone/screens/location_screen.dart';
 import 'package:newone/screens/map_screen.dart';
+import 'package:newone/screens/schedule_screen.dart';
 import 'package:newone/screens/welcome_screen.dart';
 import 'screens/signup_page.dart';
 import 'screens/login_page.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/forgotPW': (context) => ForgotPWPage(),
         '/allPlaces': (context) => AllPlacesScreen(),
         '/allHotels': (context) => HotelsPage(),
+        '/schedule': (context) => SchedulePage(),
       },
     );
   }
