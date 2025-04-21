@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final String latitude;
+  final String longitude;
+
+  const MapScreen({
+    super.key,
+    required this.latitude,
+    required this.longitude,
+  });
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -11,7 +18,11 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
 
-  static const LatLng initialPosition = LatLng(7.9570, 80.7603);
+  LatLng get latLng {
+    final lat = double.tryParse(widget.latitude) ?? 0.0;
+    final lon = double.tryParse(widget.longitude) ?? 0.0;
+    return LatLng(lat, lon);
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -27,47 +38,23 @@ class _MapScreenState extends State<MapScreen> {
         ),
         backgroundColor: Colors.black,
       ),
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: initialPosition,
-          zoom: 11.0,
-        ),
-        markers: {
-          Marker(
-            markerId: const MarkerId('initialPosition'),
-            position: initialPosition,
-            infoWindow: const InfoWindow(
-              title: 'Initial Position',
-              snippet: 'This is the initial position of the map.',
-            ),
+      body: SafeArea(
+        child: GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: latLng,
+            zoom: 15.0,
           ),
-        },
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white70,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.home),
-              onPressed: () {
-                Navigator.pushNamed(context, '/welcome');
-              },
+          markers: {
+            Marker(
+              markerId: const MarkerId('selectedLocation'),
+              position: latLng,
+              infoWindow: const InfoWindow(
+                title: 'Initial Position',
+                snippet: 'This is the initial position of the map.',
+              ),
             ),
-            IconButton(
-              icon: const Icon(Icons.map),
-              onPressed: () {
-                Navigator.pushNamed(context, '/map');
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.person),
-              onPressed: () {
-                Navigator.pushNamed(context, '/signup');
-              },
-            ),
-          ],
+          },
         ),
       ),
     );

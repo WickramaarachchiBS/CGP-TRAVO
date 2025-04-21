@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:newone/screens/map_screen.dart';
 import 'package:newone/services/locationServices.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationScreen extends StatefulWidget {
   final String place;
   final String imagePath;
-  final String latLon;
+  final String latitude;
+  final String longitude;
 
   const LocationScreen({
     super.key,
     required this.place,
     required this.imagePath,
-    required this.latLon,
+    required this.latitude,
+    required this.longitude,
   });
 
   @override
@@ -30,14 +33,17 @@ class _LocationScreenState extends State<LocationScreen> {
 
   Future<void> _getDistrictFromLatLng() async {
     try {
-      List<String> coordinates = widget.latLon.split(',');
-      if (coordinates.length != 2) {
-        throw Exception('Invalid latLon format');
-      }
+      // List<String> coordinates = widget.latLon.split(',');
+      // if (coordinates.length != 2) {
+      //   throw Exception('Invalid latLon format');
+      // }
 
-      double latitude = double.parse(coordinates[0].trim());
-      double longitude = double.parse(coordinates[1].trim());
-      LatLng latLng = LatLng(latitude, longitude);
+      // double latitude = double.parse(coordinates[0].trim());
+      // double longitude = double.parse(coordinates[1].trim());
+      LatLng latLng = LatLng(
+        double.parse(widget.latitude),
+        double.parse(widget.longitude),
+      );
 
       String? districtResult = await googleServices.getDistrictFromLatLng(latLng);
       setState(() {
@@ -219,8 +225,17 @@ class _LocationScreenState extends State<LocationScreen> {
           margin: EdgeInsets.only(bottom: 20.0, top: 3.0, left: 13.0, right: 13.0),
           child: ElevatedButton(
             onPressed: () {
-              // Handle button press
-              Navigator.pushNamed(context, '/map');
+              // Navigate to the map screen with the latitude and longitude
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MapScreen(
+                    latitude: widget.latitude,
+                    longitude: widget.longitude,
+                  ),
+                ),
+              );
+              // Navigator.pushNamed(context, '/map');
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Colors.blueAccent),

@@ -160,7 +160,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     builder: (context) => LocationScreen(
                                       place: popular.name,
                                       imagePath: popular.imagePath,
-                                      latLon: "${popular.latitude}, ${popular.longitude}",
+                                      latitude: popular.latitude.toString(),
+                                      longitude: popular.longitude.toString(),
                                     ),
                                   ),
                                 );

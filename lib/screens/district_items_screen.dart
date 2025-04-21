@@ -41,7 +41,8 @@ class DistrictItemsScreen extends StatelessWidget {
                         builder: (context) => LocationScreen(
                           place: place.name,
                           imagePath: place.imagePath,
-                          latLon: "${place.latitude}, ${place.longitude}",
+                          latitude: place.latitude.toString(),
+                          longitude: place.longitude.toString(),
                         ),
                       ),
                     );
