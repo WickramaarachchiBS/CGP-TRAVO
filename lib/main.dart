@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:newone/screens/all_hotels_screen.dart';
-import 'package:newone/screens/filter_by_district_screen.dart';
+import 'package:newone/screens/districts_screen.dart';
 import 'package:newone/screens/home_screen.dart';
 import 'package:newone/screens/location_screen.dart';
 import 'package:newone/screens/map_screen.dart';
