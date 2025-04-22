@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:newone/screens/map_screen.dart';
 import 'package:newone/services/locationServices.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:newone/Data/Bookmarks.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LocationScreen extends StatefulWidget {
   final String place;
@@ -55,6 +58,39 @@ class _LocationScreenState extends State<LocationScreen> {
       setState(() {
         district = 'Error: $e';
       });
+    }
+  }
+
+  // Function to save bookmark to Firestore
+  Future<void> _bookmarkLocation() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please log in to bookmark locations')),
+        );
+        return;
+      }
+
+      final bookmark = Bookmarks(
+        name: widget.place,
+        imagePath: widget.imagePath,
+        latitude: double.parse(widget.latitude),
+        longitude: double.parse(widget.longitude),
+        desc: widget.desc,
+        userId: user.uid,
+      );
+
+      // Save to Firestore under 'bookmarks' collection
+      await FirebaseFirestore.instance.collection('bookmarks').add(bookmark.toFirestore());
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Location bookmarked successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error bookmarking location: $e')),
+      );
     }
   }
 
@@ -114,7 +150,9 @@ class _LocationScreenState extends State<LocationScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0, right: 10.0),
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _bookmarkLocation();
+                          },
                           icon: Container(
                             padding: EdgeInsets.all(10.0),
                             decoration: BoxDecoration(

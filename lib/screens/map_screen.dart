@@ -38,6 +38,7 @@ class _MapScreenState extends State<MapScreen> {
           'Destination',
           style: TextStyle(fontSize: 20, color: Colors.black),
         ),
+        centerTitle: true,
         // backgroundColor: Colors.black,
       ),
       body: SafeArea(

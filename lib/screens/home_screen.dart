@@ -132,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   _buildCategoryItem("Places", Icons.place, "/allPlaces"),
                   _buildCategoryItem("Hotels", Icons.hotel, "/allHotels"),
-                  _buildCategoryItem("Bookmarks", Icons.bookmark, ""),
+                  _buildCategoryItem("Bookmarks", Icons.bookmark, "/bookmarks"),
                   _buildCategoryItem("Schedule", Icons.schedule, "/schedule"),
                 ],
               ),
