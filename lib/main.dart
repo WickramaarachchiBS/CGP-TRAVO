@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:newone/screens/all_hotels_screen.dart';
 import 'package:newone/screens/districts_screen.dart';
 import 'package:newone/screens/home_screen.dart';
+import 'package:newone/screens/location_hotel_screen.dart';
 import 'package:newone/screens/location_screen.dart';
 import 'package:newone/screens/map_screen.dart';
 import 'package:newone/screens/schedule_screen.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/allPlaces': (context) => AllPlacesScreen(),
         '/allHotels': (context) => HotelsPage(),
         '/schedule': (context) => SchedulePage(),
+        '/locationhotel': (context) => LocationScreenHotel(),
       },
     );
   }

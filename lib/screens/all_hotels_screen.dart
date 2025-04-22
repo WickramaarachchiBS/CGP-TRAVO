@@ -1,4 +1,3 @@
-// hotels_page.dart
 import 'package:flutter/material.dart';
 import 'package:newone/Data/Hotel.dart';
 
@@ -66,24 +65,29 @@ class _HotelsPageState extends State<HotelsPage> {
             ],
           ),
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(8.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: filteredHotels.length,
-              itemBuilder: (context, index) {
-                final hotel = filteredHotels[index];
-                return _buildPopularCard(
-                  hotel.name,
-                  hotel.imagePath,
-                  hotel.distance,
-                  hotel.price,
-                );
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/locationhotel');
               },
+              child: GridView.builder(
+                padding: const EdgeInsets.all(8.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                itemCount: filteredHotels.length,
+                itemBuilder: (context, index) {
+                  final hotel = filteredHotels[index];
+                  return _buildPopularCard(
+                    hotel.name,
+                    hotel.imagePath,
+                    hotel.distance,
+                    hotel.price,
+                  );
+                },
+              ),
             ),
           ),
         ],
