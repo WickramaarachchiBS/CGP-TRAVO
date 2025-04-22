@@ -94,11 +94,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       CircleAvatar(
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.person),
-                        ),
-                      ),
+                          child: PopupMenuButton<String>(
+                        icon: Icon(Icons.person),
+                        onSelected: (value) {
+                          if (value == 'logout') {
+                            FirebaseAuth.instance.signOut();
+                            Navigator.pushReplacementNamed(context, '/login');
+                            print('Logged out');
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          const PopupMenuItem<String>(
+                            value: 'logout',
+                            child: Text('Logout'),
+                          ),
+                        ],
+                      )),
                     ],
                   )
                 ],

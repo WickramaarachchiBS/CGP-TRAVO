@@ -29,6 +29,14 @@ class LocationScreen extends StatefulWidget {
 class _LocationScreenState extends State<LocationScreen> {
   String district = 'Loading...';
   final GoogleServices googleServices = GoogleServices();
+  bool isBookmarked = false;
+  String? bookmarkDocId;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBookmarkStatus(); // Check if the location is bookmarked when the screen loads
+  }
 
   @override
   void didChangeDependencies() {
@@ -61,8 +69,33 @@ class _LocationScreenState extends State<LocationScreen> {
     }
   }
 
-  // Function to save bookmark to Firestore
-  Future<void> _bookmarkLocation() async {
+  // Check if the location is already bookmarked
+  Future<void> _checkBookmarkStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      final query =
+          await FirebaseFirestore.instance.collection('bookmarks').where('userId', isEqualTo: user.uid).where('name', isEqualTo: widget.place).get();
+
+      if (query.docs.isNotEmpty) {
+        setState(() {
+          isBookmarked = true;
+          bookmarkDocId = query.docs.first.id; // Store the document ID
+        });
+      } else {
+        setState(() {
+          isBookmarked = false;
+          bookmarkDocId = null;
+        });
+      }
+    } catch (e) {
+      print('Error checking bookmark status: $e');
+    }
+  }
+
+  // Toggle bookmark (add or remove)
+  Future<void> _toggleBookmark() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -72,24 +105,45 @@ class _LocationScreenState extends State<LocationScreen> {
         return;
       }
 
-      final bookmark = Bookmarks(
-        name: widget.place,
-        imagePath: widget.imagePath,
-        latitude: double.parse(widget.latitude),
-        longitude: double.parse(widget.longitude),
-        desc: widget.desc,
-        userId: user.uid,
-      );
+      if (isBookmarked) {
+        // Remove bookmark
+        if (bookmarkDocId != null) {
+          await FirebaseFirestore.instance.collection('bookmarks').doc(bookmarkDocId).delete();
 
-      // Save to Firestore under 'bookmarks' collection
-      await FirebaseFirestore.instance.collection('bookmarks').add(bookmark.toFirestore());
+          setState(() {
+            isBookmarked = false;
+            bookmarkDocId = null;
+          });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Location bookmarked successfully')),
-      );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Bookmark removed')),
+          );
+        }
+      } else {
+        // Add bookmark
+        final bookmark = Bookmarks(
+          name: widget.place,
+          imagePath: widget.imagePath,
+          latitude: double.parse(widget.latitude),
+          longitude: double.parse(widget.longitude),
+          desc: widget.desc,
+          userId: user.uid,
+        );
+
+        final docRef = await FirebaseFirestore.instance.collection('bookmarks').add(bookmark.toFirestore());
+
+        setState(() {
+          isBookmarked = true;
+          bookmarkDocId = docRef.id;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Location bookmarked successfully')),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error bookmarking location: $e')),
+        SnackBar(content: Text('Error: $e')),
       );
     }
   }
@@ -151,7 +205,7 @@ class _LocationScreenState extends State<LocationScreen> {
                         padding: const EdgeInsets.only(top: 10.0, right: 10.0),
                         child: IconButton(
                           onPressed: () {
-                            _bookmarkLocation();
+                            _toggleBookmark();
                           },
                           icon: Container(
                             padding: EdgeInsets.all(10.0),
