@@ -31,15 +31,23 @@ class _SchedulePageState extends State<SchedulePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'My Schedule',
+          style: TextStyle(
+            fontSize: 19.0,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with back button, title and settings
-              _buildHeader(),
-              const SizedBox(height: 20),
+              // // Header with back button, title and settings
+              // _buildHeader(),
+              // const SizedBox(height: 20),
 
               // Month selector and calendar
               _buildCalendar(),
