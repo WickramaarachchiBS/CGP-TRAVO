@@ -11,7 +11,9 @@ class _LocationScreenHotelState extends State<LocationScreenHotel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text('helooeieme'),
+      body: SafeArea(
+        child: Text('helooeieme'),
+      ),
     );
   }
 }

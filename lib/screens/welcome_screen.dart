@@ -62,7 +62,7 @@ class WelcomeScreen extends StatelessWidget {
               height: 50.0,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/home');
+                  Navigator.pushNamed(context, '/login');
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.blueAccent),

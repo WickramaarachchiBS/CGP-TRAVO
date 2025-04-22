@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:newone/Data/Popular.dart';
 import 'package:newone/Data/Popular.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,11 +18,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? _address = 'Fetching address...';
+  String? _userName = 'User';
 
   @override
   void initState() {
     super.initState();
     _fetchUserAddress();
+    _fetchLoggedInUser();
+  }
+
+  Future<void> _fetchLoggedInUser() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        String email = user.email ?? 'User';
+        _userName = email.split('@').first;
+      });
+      print(_userName);
+    }
   }
 
   Future<void> _fetchUserAddress() async {
@@ -61,8 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Hi, User",
+                      Text(
+                        "Hi, $_userName",
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
