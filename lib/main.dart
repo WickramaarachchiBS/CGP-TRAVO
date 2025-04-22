@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:newone/screens/all_hotels_screen.dart';
 import 'package:newone/screens/bookmarks_screen.dart';
+import 'package:newone/screens/chatbot_screen.dart';
 import 'package:newone/screens/districts_screen.dart';
 import 'package:newone/screens/home_screen.dart';
 import 'package:newone/screens/location_hotel_screen.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/schedule': (context) => SchedulePage(),
         '/bookmarks': (context) => BookmarksScreen(),
         '/locationhotel': (context) => LocationScreenHotel(),
+        'chatbot': (context) => ChatScreen(),
       },
     );
   }

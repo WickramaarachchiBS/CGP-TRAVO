@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:newone/screens/chatbot_screen.dart';
 import 'package:newone/screens/location_screen.dart';
 import 'package:newone/services/locationServices.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -269,7 +270,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      // bottomNavigationBar: _buildBottomNavBar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ChatScreen()),
+          );
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.chat_bubble, color: Colors.white),
+      ),
     );
   }
 
