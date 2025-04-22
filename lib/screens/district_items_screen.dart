@@ -43,6 +43,7 @@ class DistrictItemsScreen extends StatelessWidget {
                           imagePath: place.imagePath,
                           latitude: place.latitude.toString(),
                           longitude: place.longitude.toString(),
+                          desc: place.desc,
                         ),
                       ),
                     );

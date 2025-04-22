@@ -162,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       imagePath: popular.imagePath,
                                       latitude: popular.latitude.toString(),
                                       longitude: popular.longitude.toString(),
+                                      desc: popular.desc,
                                     ),
                                   ),
                                 );

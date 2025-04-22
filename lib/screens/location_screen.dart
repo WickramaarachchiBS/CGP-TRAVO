@@ -8,6 +8,7 @@ class LocationScreen extends StatefulWidget {
   final String imagePath;
   final String latitude;
   final String longitude;
+  final String desc;
 
   const LocationScreen({
     super.key,
@@ -15,6 +16,7 @@ class LocationScreen extends StatefulWidget {
     required this.imagePath,
     required this.latitude,
     required this.longitude,
+    required this.desc,
   });
 
   @override
@@ -211,7 +213,9 @@ class _LocationScreenState extends State<LocationScreen> {
               // color: Colors.lightGreenAccent,
               child: SingleChildScrollView(
                 child: Text(
-                  'Sigiriya, also known as the Lion Rock, is an ancient rock fortress and palace located in the Matale District of Sri Lanka. It is one of the country\'s most treasured historical sites and is recognized as a UNESCO World Heritage Site. Rising 200 meters (660 feet) above the surrounding plains, this massive rock formation served as a royal citadel for King Kashyapa I in the 5th century AD.',
+                  widget.desc,
+                  style: TextStyle(fontSize: 15.0, color: Colors.black54),
+                  textAlign: TextAlign.justify,
                 ),
               ),
             ),

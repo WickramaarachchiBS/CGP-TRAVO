@@ -7,6 +7,7 @@ class Places {
   final double latitude;
   final double longitude;
   final String address;
+  final String desc;
 
   Places({
     required this.name,
@@ -14,6 +15,7 @@ class Places {
     required this.latitude,
     required this.longitude,
     required this.address,
+    required this.desc,
   });
 
   factory Places.fromFirestore(DocumentSnapshot doc) {
@@ -24,6 +26,7 @@ class Places {
       latitude: double.tryParse(data['latitude'].toString()) ?? 0.0,
       longitude: double.tryParse(data['longitude'].toString()) ?? 0.0,
       address: data['address'] ?? '',
+      desc: data['desc'] ?? '',
     );
   }
 }
