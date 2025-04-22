@@ -236,6 +236,7 @@ class _LocationScreenState extends State<LocationScreen> {
                   builder: (context) => MapScreen(
                     latitude: widget.latitude,
                     longitude: widget.longitude,
+                    name: widget.place,
                   ),
                 ),
               );

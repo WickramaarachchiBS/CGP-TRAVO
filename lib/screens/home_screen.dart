@@ -118,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   _buildCategoryItem("Places", Icons.place, "/allPlaces"),
                   _buildCategoryItem("Hotels", Icons.hotel, "/allHotels"),
+                  _buildCategoryItem("Bookmarks", Icons.bookmark, ""),
                   _buildCategoryItem("Schedule", Icons.schedule, "/schedule"),
                 ],
               ),
@@ -167,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                                 print("Tapped on ${popular.name}");
+                                print(popular.imagePath);
                               },
                               child: Container(
                                 margin: EdgeInsets.only(bottom: 10),
@@ -180,42 +182,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ],
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                                      child: CachedNetworkImage(
-                                        imageUrl: popular.imagePath,
-                                        height: 120,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) => Container(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey, width: 0.5),
+                                    borderRadius: BorderRadius.circular(15),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 5,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                                        child: CachedNetworkImage(
+                                          imageUrl: popular.imagePath,
                                           height: 120,
-                                          color: Colors.grey,
-                                          child: Center(child: Text('Image not found')),
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) => Container(
+                                            height: 120,
+                                            color: Colors.grey,
+                                            child: Center(child: Text('Image not found')),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            popular.name,
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                          ),
-                                          SizedBox(height: 4),
-                                          Text(
-                                            "${popular.distance} km",
-                                            style: TextStyle(color: Colors.grey),
-                                          ),
-                                        ],
+                                      Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              popular.name,
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                            ),
+                                            // SizedBox(height: 4),
+                                            // Text(
+                                            //   "${popular.distance} km",
+                                            //   style: TextStyle(color: Colors.grey),
+                                            // ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -230,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+      // bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
@@ -269,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
         BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favorites"),
+        BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "Favorites"),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
       ],
     );

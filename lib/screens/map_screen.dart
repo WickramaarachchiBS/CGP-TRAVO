@@ -4,11 +4,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class MapScreen extends StatefulWidget {
   final String latitude;
   final String longitude;
+  final String name;
 
   const MapScreen({
     super.key,
     required this.latitude,
     required this.longitude,
+    required this.name,
   });
 
   @override
@@ -34,9 +36,9 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         title: const Text(
           'Destination',
-          style: TextStyle(fontSize: 20, color: Colors.white70),
+          style: TextStyle(fontSize: 20, color: Colors.black),
         ),
-        backgroundColor: Colors.black,
+        // backgroundColor: Colors.black,
       ),
       body: SafeArea(
         child: GoogleMap(
@@ -49,9 +51,8 @@ class _MapScreenState extends State<MapScreen> {
             Marker(
               markerId: const MarkerId('selectedLocation'),
               position: latLng,
-              infoWindow: const InfoWindow(
-                title: 'Initial Position',
-                snippet: 'This is the initial position of the map.',
+              infoWindow: InfoWindow(
+                title: widget.name,
               ),
             ),
           },
