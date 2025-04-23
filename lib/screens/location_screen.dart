@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:newone/Data/Bookmarks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:newone/services/weatherServices.dart';
 
 class LocationScreen extends StatefulWidget {
   final String place;
@@ -29,6 +30,10 @@ class LocationScreen extends StatefulWidget {
 class _LocationScreenState extends State<LocationScreen> {
   String district = 'Loading...';
   final GoogleServices googleServices = GoogleServices();
+
+  final WeatherService weatherService = WeatherService();
+  Map<String, dynamic>? weatherData;
+
   bool isBookmarked = false;
   String? bookmarkDocId;
 
@@ -36,6 +41,7 @@ class _LocationScreenState extends State<LocationScreen> {
   void initState() {
     super.initState();
     _checkBookmarkStatus(); // Check if the location is bookmarked when the screen loads
+    fetchWeather();
   }
 
   @override
@@ -46,13 +52,6 @@ class _LocationScreenState extends State<LocationScreen> {
 
   Future<void> _getDistrictFromLatLng() async {
     try {
-      // List<String> coordinates = widget.latLon.split(',');
-      // if (coordinates.length != 2) {
-      //   throw Exception('Invalid latLon format');
-      // }
-
-      // double latitude = double.parse(coordinates[0].trim());
-      // double longitude = double.parse(coordinates[1].trim());
       LatLng latLng = LatLng(
         double.parse(widget.latitude),
         double.parse(widget.longitude),
@@ -67,6 +66,34 @@ class _LocationScreenState extends State<LocationScreen> {
         district = 'Error: $e';
       });
     }
+  }
+
+  //function to fetch weather from API
+  Future<void> fetchWeather() async {
+    try {
+      double lat = double.parse(widget.latitude);
+      double lon = double.parse(widget.longitude);
+      final data = await weatherService.getWeather(lat, lon);
+      setState(() {
+        weatherData = data;
+      });
+    } catch (e) {
+      print('Error fetching weather data: $e');
+    }
+  }
+
+  //Weather icon in description
+  Widget buildWeatherIcon() {
+    if (weatherData == null || weatherData!['weather'] == null || weatherData!['weather'].isEmpty) {
+      return SizedBox.shrink();
+    }
+
+    final iconCode = weatherData!['weather'][0]['icon'];
+    return Image.network(
+      'https://openweathermap.org/img/wn/${iconCode}@2x.png',
+      width: 50,
+      height: 50,
+    );
   }
 
   // Check if the location is already bookmarked
@@ -292,9 +319,24 @@ class _LocationScreenState extends State<LocationScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Icon(Icons.cloud),
+                  Icon(Icons.cloud_outlined),
                   SizedBox(width: 10.0),
-                  Text('32.0 °C'),
+                  Text(
+                    weatherData != null ? '${weatherData!['main']['temp']}°C' : 'Loading...',
+                    style: TextStyle(fontSize: 15.0, color: Colors.black54),
+                  ),
+                  SizedBox(width: 20.0),
+                  Icon(Icons.water_drop_outlined),
+                  Text(
+                    weatherData != null ? '${weatherData!['main']['humidity']}%' : 'Loading...',
+                    style: TextStyle(fontSize: 15.0, color: Colors.black54),
+                  ),
+                  SizedBox(width: 20.0),
+                  buildWeatherIcon(),
+                  Text(
+                    weatherData != null ? weatherData!['weather'][0]['description'] : 'Loading...',
+                    style: TextStyle(fontSize: 15.0, color: Colors.black54),
+                  ),
                 ],
               ),
             ),
