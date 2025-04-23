@@ -171,9 +171,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildCategoryItem("Places", Icons.place, "/allPlaces"),
-                  _buildCategoryItem("Hotels", Icons.hotel, "/allHotels"),
                   _buildCategoryItem("Bookmarks", Icons.bookmark, "/bookmarks"),
-                  _buildCategoryItem("Schedule", Icons.schedule, "/schedule"),
+                  _buildCategoryItem("Hotels", Icons.hotel, "/allHotels"),
+                  _buildCategoryItem("My Schedule", Icons.schedule, "/schedule"),
                 ],
               ),
               const SizedBox(height: 20),
