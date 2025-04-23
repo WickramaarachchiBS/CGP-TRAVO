@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:newone/screens/chatbot_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:newone/screens/home_screen.dart';
 import 'package:newone/screens/welcome_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -11,15 +13,13 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Show loading indicator while checking auth state
-          return Scaffold(
+          return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
         if (snapshot.hasData) {
-          // User is logged in, show ChatScreen
-          return ChatScreen();
+          return HomeScreen();
         } else {
-          // User is not logged in, show WelcomePage
           return WelcomeScreen();
         }
       },

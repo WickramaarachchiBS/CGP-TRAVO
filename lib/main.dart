@@ -6,17 +6,13 @@ import 'package:newone/screens/chatbot_screen.dart';
 import 'package:newone/screens/districts_screen.dart';
 import 'package:newone/screens/home_screen.dart';
 import 'package:newone/screens/location_hotel_screen.dart';
-import 'package:newone/screens/location_screen.dart';
-import 'package:newone/screens/map_screen.dart';
 import 'package:newone/screens/schedule_screen.dart';
 import 'package:newone/screens/welcome_screen.dart';
+import 'package:newone/services/auth_layout.dart';
 import 'screens/signup_page.dart';
 import 'screens/login_page.dart';
 import 'screens/verify_page.dart';
 import 'screens/forgotpassword_page.dart';
-import 'firebase_options.dart';
-
-import 'services/locationServices.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: ' CGP TRAVO',
-      home: WelcomeScreen(),
+      home: AuthWrapper(),
       routes: {
         '/welcome': (context) => WelcomeScreen(),
         '/home': (context) => HomeScreen(),
@@ -44,7 +40,7 @@ class MyApp extends StatelessWidget {
         '/allHotels': (context) => HotelsPage(),
         '/schedule': (context) => SchedulePage(),
         '/bookmarks': (context) => BookmarksScreen(),
-        '/locationhotel': (context) => LocationScreenHotel(),
+        '/locationHotel': (context) => LocationScreenHotel(),
         'chatbot': (context) => ChatScreen(),
       },
     );

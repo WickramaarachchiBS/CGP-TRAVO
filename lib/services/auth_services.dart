@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 ValueNotifier<AuthService> authService = ValueNotifier(AuthService());
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   User? get currentUser => _auth.currentUser;
 
@@ -27,13 +28,12 @@ class AuthService {
         password: password,
       );
       //store in firestore
-      // await _firestore.collection('users').doc(_auth.currentUser!.uid).set({
-      //   'username': username,
-      //   'email': email,
-      //   'nic': nic,
-      //   'uid': _auth.currentUser!.uid,
-      //   'createdAt': FieldValue.serverTimestamp(),
-      // });
+      await _firestore.collection('users').doc(_auth.currentUser!.uid).set({
+        'uid': _auth.currentUser!.uid,
+        'email': email,
+        'role': 'user',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
       return userCredential;
     } catch (e) {

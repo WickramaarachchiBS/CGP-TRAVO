@@ -67,7 +67,7 @@ class _HotelsPageState extends State<HotelsPage> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/locationhotel');
+                Navigator.pushNamed(context, '/locationHotel');
               },
               child: GridView.builder(
                 padding: const EdgeInsets.all(8.0),
