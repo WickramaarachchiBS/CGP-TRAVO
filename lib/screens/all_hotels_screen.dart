@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:newone/Data/Hotel.dart';
 
 class HotelsPage extends StatefulWidget {
@@ -10,13 +13,57 @@ class HotelsPage extends StatefulWidget {
 
 class _HotelsPageState extends State<HotelsPage> {
   String? selectedDistrict;
+  List<String> districts = ['All'];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDistricts();
+    _requestLocationPermission();
+  }
+
+  // Request location permission for distance calculation
+  Future<void> _requestLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permission is required to calculate distances')),
+        );
+      }
+    }
+  }
+
+  // Fetch unique districts from Firestore
+  Future<void> _loadDistricts() async {
+    final snapshot = await FirebaseFirestore.instance.collection('hotels').get();
+    final uniqueDistricts = snapshot.docs.map((doc) => doc['district'] as String).toSet().toList();
+    setState(() {
+      districts.addAll(uniqueDistricts..sort()); // Sort for better UX
+    });
+  }
+
+  // Calculate distance between user's location and hotel
+  Future<double> _calculateDistance(double latitude, double longitude) async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      return Geolocator.distanceBetween(
+            position.latitude,
+            position.longitude,
+            latitude,
+            longitude,
+          ) /
+          1000; // Convert meters to kilometers
+    } catch (e) {
+      return 0.0; // Fallback distance
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Hotel> filteredHotels = selectedDistrict == null || selectedDistrict == 'All'
-        ? Hotel.hotels
-        : Hotel.hotels.where((hotel) => hotel.district == selectedDistrict).toList();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hotels'),
@@ -46,10 +93,8 @@ class _HotelsPageState extends State<HotelsPage> {
                   value: selectedDistrict,
                   hint: const Text('All'),
                   isExpanded: true,
-                  style: const TextStyle(
-                    color: Colors.black,
-                  ),
-                  items: Hotel.districts.map((district) {
+                  style: const TextStyle(color: Colors.black),
+                  items: districts.map((district) {
                     return DropdownMenuItem<String>(
                       value: district,
                       child: Text(district),
@@ -65,67 +110,77 @@ class _HotelsPageState extends State<HotelsPage> {
             ],
           ),
           Expanded(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/locationHotel');
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('hotels').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading hotels'));
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No hotels found'));
+                }
+
+                // Filter hotels based on selected district
+                final hotelDocs = snapshot.data!.docs.where((doc) {
+                  final hotel = doc.data() as Map<String, dynamic>;
+                  return selectedDistrict == null || selectedDistrict == 'All' || hotel['district'] == selectedDistrict;
+                }).toList();
+
+                return GridView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: hotelDocs.length,
+                  itemBuilder: (context, index) {
+                    final hotelData = hotelDocs[index].data() as Map<String, dynamic>;
+                    // Parse latitude and longitude safely
+                    final latitude = hotelData['latitude'];
+                    final longitude = hotelData['longitude'];
+                    final double lat = latitude is String ? double.tryParse(latitude) ?? 0.0 : (latitude as num?)?.toDouble() ?? 0.0;
+                    final double lon = longitude is String ? double.tryParse(longitude) ?? 0.0 : (longitude as num?)?.toDouble() ?? 0.0;
+
+                    // Parse price safely
+                    final price = hotelData['price'];
+                    final double parsedPrice = price is String ? double.tryParse(price) ?? 0.0 : (price as num?)?.toDouble() ?? 0.0;
+
+                    final hotel = Hotel(
+                      name: hotelData['name'] ?? 'Unknown',
+                      imagePath: hotelData['imagePath'] ?? '',
+                      distance: 0.0, // Will be calculated dynamically
+                      district: hotelData['district'] ?? '',
+                      location: LatLng(lat, lon),
+                      price: parsedPrice,
+                    );
+
+                    return FutureBuilder<double>(
+                      future: _calculateDistance(
+                        hotel.location.latitude,
+                        hotel.location.longitude,
+                      ),
+                      builder: (context, distanceSnapshot) {
+                        final distance = distanceSnapshot.data ?? 0.0;
+                        return _buildPopularCard(
+                          hotel.name,
+                          hotel.imagePath,
+                          distance,
+                          hotel.price,
+                        );
+                      },
+                    );
+                  },
+                );
               },
-              child: GridView.builder(
-                padding: const EdgeInsets.all(8.0),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                ),
-                itemCount: filteredHotels.length,
-                itemBuilder: (context, index) {
-                  final hotel = filteredHotels[index];
-                  return _buildPopularCard(
-                    hotel.name,
-                    hotel.imagePath,
-                    hotel.distance,
-                    hotel.price,
-                  );
-                },
-              ),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCategoryItem(String title, IconData icon, bool isSelected) {
-    return Column(
-      children: [
-        TextButton(
-          style: TextButton.styleFrom(
-            shape: const CircleBorder(),
-            padding: const EdgeInsets.all(5),
-            backgroundColor: isSelected ? Colors.blue.withOpacity(0.2) : null,
-          ),
-          onPressed: () {
-            setState(() {
-              selectedDistrict = title;
-            });
-          },
-          child: CircleAvatar(
-            backgroundColor: isSelected ? Colors.blue.withOpacity(0.1) : null,
-            child: Icon(
-              icon,
-              color: isSelected ? Colors.blue : Colors.grey,
-            ),
-          ),
-        ),
-        const SizedBox(height: 1),
-        Text(
-          title,
-          style: TextStyle(
-            color: isSelected ? Colors.blue : Colors.black,
-            fontSize: 13,
-          ),
-        ),
-      ],
     );
   }
 
@@ -147,17 +202,34 @@ class _HotelsPageState extends State<HotelsPage> {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-            child: Image.asset(imagePath, height: 120, width: double.infinity, fit: BoxFit.cover),
+            child: imagePath.isNotEmpty
+                ? Image.network(
+                    imagePath,
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 120),
+                  )
+                : const Icon(Icons.broken_image, size: 120),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 4),
-                Text("${distance}km", style: const TextStyle(color: Colors.grey)),
-                Text('LKR ${price.toInt()} per night', style: const TextStyle(color: Colors.grey)),
+                Text(
+                  "${distance.toStringAsFixed(1)}km",
+                  style: const TextStyle(color: Colors.grey),
+                ),
+                Text(
+                  'LKR ${price.toInt()} per night',
+                  style: const TextStyle(color: Colors.grey),
+                ),
               ],
             ),
           ),
