@@ -45,9 +45,8 @@ class _LogInPageState extends State<LogInPage> {
         email: email,
         password: password,
       );
-      // Navigate to home page or another screen after successful login
-      Navigator.pushReplacementNamed(context, '/home');
       print('Login successful');
+      Navigator.pushNamed(context, '/auth');
     } on FirebaseAuthException catch (e) {
       setState(() {
         switch (e.code) {
@@ -265,7 +264,7 @@ class _LogInPageState extends State<LogInPage> {
                 SizedBox(
                   height: 20.0,
                 ),
-                //register button---------------------------------
+                //login button---------------------------------
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
