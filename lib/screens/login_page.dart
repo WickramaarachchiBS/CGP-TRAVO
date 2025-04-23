@@ -46,7 +46,7 @@ class _LogInPageState extends State<LogInPage> {
         password: password,
       );
       print('Login successful');
-      Navigator.pushNamed(context, '/auth');
+      Navigator.pushNamed(context, '/home');
     } on FirebaseAuthException catch (e) {
       setState(() {
         switch (e.code) {
