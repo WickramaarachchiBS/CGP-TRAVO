@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:newone/screens/admin_screen.dart';
 import 'package:newone/screens/all_hotels_screen.dart';
 import 'package:newone/screens/bookmarks_screen.dart';
 import 'package:newone/screens/chatbot_screen.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       home: AuthWrapper(),
       routes: {
         '/welcome': (context) => WelcomeScreen(),
+        '/admin': (context) => AdminScreen(),
         '/home': (context) => HomeScreen(),
         '/signup': (context) => SignUpPage(),
         '/login': (context) => LogInPage(),

@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:newone/screens/admin_screen.dart';
 import 'package:newone/screens/home_screen.dart';
 import 'package:newone/screens/welcome_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -14,14 +16,36 @@ class AuthWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Show loading indicator while checking auth state
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
         if (snapshot.hasData) {
-          return HomeScreen();
-        } else {
-          return WelcomeScreen();
+          User user = snapshot.data!;
+          // Check user role from Firestore
+          return FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance.collection('users').doc(user.uid).get(),
+            builder: (context, roleSnapshot) {
+              if (roleSnapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (roleSnapshot.hasData && roleSnapshot.data!.exists) {
+                String role = roleSnapshot.data!.get('role') ?? 'user';
+                print('User role: $role, email: ${user.email}');
+                if (role == 'admin') {
+                  return const AdminScreen();
+                }
+              }
+              return HomeScreen();
+            },
+          );
         }
+
+        print('No user logged in');
+        return WelcomeScreen();
       },
     );
   }
