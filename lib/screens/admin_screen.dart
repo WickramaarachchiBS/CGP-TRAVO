@@ -119,6 +119,7 @@ class AdminScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
+                  color: Color(0xffb9cfec),
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -128,132 +129,32 @@ class AdminScreen extends StatelessWidget {
                     const Text(
                       'Add New Place',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: districtController,
-                      decoration: const InputDecoration(
-                        labelText: 'District',
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter district name',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a district';
-                        }
-                        return null;
-                      },
-                    ),
+                    TextField(controller: districtController, labelText: 'District', maxLines: 1),
                     const SizedBox(height: 12),
-                    TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Place Name',
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter place name',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a place name';
-                        }
-                        return null;
-                      },
-                    ),
+                    TextField(controller: nameController, labelText: 'Place Name', maxLines: 1),
                     const SizedBox(height: 12),
-                    TextFormField(
-                      controller: addressController,
-                      decoration: const InputDecoration(
-                        labelText: 'Address',
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter full address',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter an address';
-                        }
-                        return null;
-                      },
-                    ),
+                    TextField(controller: addressController, labelText: 'Address', maxLines: 1),
                     const SizedBox(height: 12),
-                    TextFormField(
-                      controller: imageUrlController,
-                      decoration: const InputDecoration(
-                        labelText: 'Image URL',
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter image URL',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter an image URL';
-                        }
-                        return null;
-                      },
-                    ),
+                    TextField(controller: imageUrlController, labelText: 'Image URL', maxLines: 1),
                     const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
-                          child: TextFormField(
-                            controller: latController,
-                            decoration: const InputDecoration(
-                              labelText: 'Latitude',
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter latitude',
-                            ),
-                            keyboardType: TextInputType.number,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter latitude';
-                              }
-                              if (double.tryParse(value) == null) {
-                                return 'Please enter a valid number';
-                              }
-                              return null;
-                            },
-                          ),
+                          child: TextField(controller: latController, labelText: 'Latitude', maxLines: 1),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: TextFormField(
-                            controller: lonController,
-                            decoration: const InputDecoration(
-                              labelText: 'Longitude',
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter longitude',
-                            ),
-                            keyboardType: TextInputType.number,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter longitude';
-                              }
-                              if (double.tryParse(value) == null) {
-                                return 'Please enter a valid number';
-                              }
-                              return null;
-                            },
-                          ),
+                          child: TextField(controller: lonController, labelText: 'Longitude', maxLines: 1),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
-                      controller: descriptionController,
-                      decoration: const InputDecoration(
-                        labelText: 'Description',
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter place description',
-                      ),
-                      maxLines: 4,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a description';
-                        }
-                        return null;
-                      },
-                    ),
+                    TextField(controller: descriptionController, labelText: 'Description', maxLines: 3),
                     const SizedBox(height: 20),
                     Center(
                       child: ElevatedButton(
@@ -277,6 +178,43 @@ class AdminScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class TextField extends StatelessWidget {
+  const TextField({
+    super.key,
+    required this.controller,
+    required this.labelText,
+    required this.maxLines,
+  });
+
+  final TextEditingController controller;
+  final String labelText;
+  final int maxLines;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      style: TextStyle(
+        height: 0.8,
+      ),
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+      maxLines: maxLines,
+      cursorHeight: 20,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a place name';
+        }
+        return null;
+      },
     );
   }
 }
