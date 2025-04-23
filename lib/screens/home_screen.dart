@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:newone/screens/chatbot_screen.dart';
 import 'package:newone/screens/location_screen.dart';
 import 'package:newone/services/locationServices.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:newone/Data/Popular.dart';
 import 'package:newone/Data/Popular.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
+    final User? user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -94,25 +94,53 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Row(
                     children: [
-                      CircleAvatar(
-                          child: PopupMenuButton<String>(
-                        icon: Icon(Icons.person),
-                        onSelected: (value) {
-                          if (value == 'logout') {
-                            FirebaseAuth.instance.signOut();
-                            Navigator.pushReplacementNamed(context, '/login');
-                            print('Logged out');
+                      FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance.collection('users').doc(user?.uid).get(),
+                        builder: (context, snapshot) {
+                          bool isAdmin = false;
+                          if (snapshot.hasData && snapshot.data!.exists) {
+                            isAdmin = snapshot.data!.get('role') == 'admin';
                           }
+                          print('HomeScreen: User role isAdmin=$isAdmin, email=${user?.email}');
+
+                          return CircleAvatar(
+                            child: PopupMenuButton<String>(
+                              icon: const Icon(Icons.person),
+                              onSelected: (value) {
+                                if (value == 'logout') {
+                                  FirebaseAuth.instance.signOut();
+                                  Navigator.pushReplacementNamed(context, '/welcome');
+                                  print('Logged out');
+                                }
+                                if (value == 'admin') {
+                                  Navigator.pushReplacementNamed(context, '/admin');
+                                  print('Navigating to Admin Page');
+                                }
+                              },
+                              itemBuilder: (BuildContext context) {
+                                List<PopupMenuItem<String>> items = [
+                                  const PopupMenuItem<String>(
+                                    value: 'logout',
+                                    child: Text('Logout'),
+                                  ),
+                                ];
+                                if (isAdmin) {
+                                  items.insert(
+                                    0, // Place Admin above Logout
+                                    const PopupMenuItem<String>(
+                                      value: 'admin',
+                                      child: Text('Admin'),
+                                    ),
+                                  );
+                                }
+                                return items;
+                              },
+                            ),
+                          );
                         },
-                        itemBuilder: (BuildContext context) => [
-                          const PopupMenuItem<String>(
-                            value: 'logout',
-                            child: Text('Logout'),
-                          ),
-                        ],
-                      )),
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 20),

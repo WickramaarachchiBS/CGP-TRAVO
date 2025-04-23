@@ -11,14 +11,38 @@ class AdminScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin Dashboard'),
+        centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              print('Admin signing out: ${user?.email}');
-              await FirebaseAuth.instance.signOut();
-            },
-          ),
+          Row(
+            children: [
+              CircleAvatar(
+                child: PopupMenuButton<String>(
+                  icon: Icon(Icons.person),
+                  onSelected: (value) {
+                    if (value == 'logout') {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacementNamed(context, '/login');
+                      print('Logged out');
+                    }
+                    if (value == 'home') {
+                      Navigator.pushReplacementNamed(context, '/home');
+                      print('Navigating to Home Page');
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => [
+                    const PopupMenuItem<String>(
+                      value: 'home',
+                      child: Text('Home'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'logout',
+                      child: Text('Logout'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )
         ],
       ),
       body: Center(
