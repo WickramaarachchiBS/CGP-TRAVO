@@ -10,16 +10,23 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, String>> messages = [];
   final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   // FAQ data
   final Map<String, String> faqResponses = {
     'hello': 'Hi! How can I assist you today?',
-    'help': 'I can answer FAQs or guide you. Try asking about "hours", "contact", or "services".',
-    'hours': 'Our business hours are 9 AM to 5 PM, Monday to Friday.',
-    'contact': 'You can reach us at support@example.com or call (123) 456-7890.',
-    'services': 'We offer consulting, development, and support services.',
+    'hi': 'Hello! How can I assist you today?',
+    'help': 'I can answer FAQs or guide you. Try asking about "places", "bookmarks", "bookings", "logout","popular","navigation", or "hotels".',
+    'places': 'Press the places button on home screen/categories.',
+    'bookmarks': 'Press the Bookmarks button on home screen/categories.',
+    'hotels': 'Press the Hotels button on home screen/categories.',
+    'bookings': 'Press the My Schedule button on home screen/categories.',
+    'logout': 'Press the profile icon on top of the home screen.',
+    'popular': 'Popular places are the places that are visited often. Listed on the home screen.',
+    'navigation': 'You can press on the location marker and then press the directions buttons that popup.',
+    'contact': 'You can reach us at travo.support@gmail.com or call +94 77 2548965.',
     'bye': 'Goodbye! Have a great day!',
-    'book': 'ggrrgrfrfrbook'
+    'book': 'To book a hotel, go to the Hotels section and select your desired hotel and press on book and proceed to payment.',
   };
 
   void _sendMessage() {
@@ -32,6 +39,15 @@ class _ChatScreenState extends State<ChatScreen> {
       // Process input and get bot response
       String response = _getBotResponse(_controller.text.toLowerCase());
       messages.add({'sender': 'bot', 'text': response});
+
+      // Scroll to the bottom of the chat
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
     });
 
     _controller.clear();
@@ -39,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   String _getBotResponse(String input) {
     // Default response if no match is found
-    String defaultResponse = "Sorry, I don't understand. Try asking about 'help', 'hours', or 'contact'.";
+    String defaultResponse = "Sorry, I don't understand. Try asking about 'help', 'contact', 'places' or 'book'.";
 
     // Check for keyword matches
     for (String keyword in faqResponses.keys) {
@@ -48,6 +64,13 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     }
     return defaultResponse;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -66,6 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
             // Chat messages
             Expanded(
               child: ListView.builder(
+                controller: _scrollController,
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
                   bool isUser = messages[index]['sender'] == 'user';
