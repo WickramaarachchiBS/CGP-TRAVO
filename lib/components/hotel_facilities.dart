@@ -5,10 +5,12 @@ class HotelFacilities extends StatelessWidget {
     super.key,
     required this.icon,
     required this.text,
+    required this.iconColor,
   });
 
   final IconData icon;
   final String text;
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +18,14 @@ class HotelFacilities extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 7.0),
       decoration: BoxDecoration(
         color: Colors.blueGrey.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             icon,
-            color: Colors.blueGrey[900],
+            color: iconColor,
           ),
           const SizedBox(width: 5),
           Text(

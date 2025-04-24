@@ -149,7 +149,7 @@ class _HotelsPageState extends State<HotelsPage> {
 
                     // Parse price safely
                     final price = hotelData['price'];
-                    final double parsedPrice = price is String ? double.tryParse(price) ?? 0.0 : (price as num?)?.toDouble() ?? 0.0;
+                    // final double parsedPrice = price is String ? double.tryParse(price) ?? 0.0 : (price as num?)?.toDouble() ?? 0.0;
 
                     final hotel = Hotel(
                       name: hotelData['name'] ?? 'Unknown',
@@ -157,7 +157,7 @@ class _HotelsPageState extends State<HotelsPage> {
                       distance: 0.0, // Will be calculated dynamically
                       district: hotelData['district'] ?? '',
                       location: LatLng(lat, lon),
-                      price: parsedPrice,
+                      price: price,
                     );
 
                     return FutureBuilder<double>(
@@ -172,6 +172,8 @@ class _HotelsPageState extends State<HotelsPage> {
                           hotel.imagePath,
                           distance,
                           hotel.price,
+                          hotel.location.latitude,
+                          hotel.location.longitude,
                         );
                       },
                     );
@@ -185,7 +187,7 @@ class _HotelsPageState extends State<HotelsPage> {
     );
   }
 
-  Widget _buildPopularCard(String title, String imagePath, double distance, double price) {
+  Widget _buildPopularCard(String title, String imagePath, double distance, String price, double latitude, double longitude) {
     return Container(
       margin: const EdgeInsets.only(right: 0),
       decoration: BoxDecoration(
@@ -203,47 +205,55 @@ class _HotelsPageState extends State<HotelsPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => LocationScreenHotel(imagePath: imagePath),
+              builder: (context) => LocationScreenHotel(
+                imagePath: imagePath,
+                hotelName: title,
+                price: price,
+                latitude: latitude,
+                longitude: longitude,
+              ),
             ),
           );
         },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-              child: imagePath.isNotEmpty
-                  ? Image.network(
-                      imagePath,
-                      height: 120,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 120),
-                    )
-                  : const Icon(Icons.broken_image, size: 120),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "${distance.toStringAsFixed(1)}km",
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  Text(
-                    'LKR ${price.toInt()} per night',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                child: imagePath.isNotEmpty
+                    ? Image.network(
+                        imagePath,
+                        height: 160,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 120),
+                      )
+                    : const Icon(Icons.broken_image, size: 120),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "${distance.toStringAsFixed(1)}km",
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                    Text(
+                      'LKR. ${price} /night',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

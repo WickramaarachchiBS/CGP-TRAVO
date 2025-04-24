@@ -6,7 +6,7 @@ class Hotel {
   final double distance;
   final String district;
   final LatLng location;
-  final double price;
+  final String price;
 
   Hotel({
     required this.name,
@@ -24,7 +24,7 @@ class Hotel {
     final double lat = latitude is String ? double.tryParse(latitude) ?? 0.0 : (latitude as num?)?.toDouble() ?? 0.0;
     final double lon = longitude is String ? double.tryParse(longitude) ?? 0.0 : (longitude as num?)?.toDouble() ?? 0.0;
     final price = data['price'];
-    final double parsedPrice = price is String ? double.tryParse(price) ?? 0.0 : (price as num?)?.toDouble() ?? 0.0;
+    // final double parsedPrice = price is String ? double.tryParse(price) ?? 0.0 : (price as num?)?.toDouble() ?? 0.0;
 
     return Hotel(
       name: data['name'] ?? 'Unknown',
@@ -32,7 +32,7 @@ class Hotel {
       distance: distance,
       district: data['district'] ?? '',
       location: LatLng(lat, lon),
-      price: parsedPrice,
+      price: price,
     );
   }
 }

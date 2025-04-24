@@ -374,7 +374,6 @@ class _LocationScreenState extends State<LocationScreen> {
                   ),
                 ),
               );
-              // Navigator.pushNamed(context, '/map');
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Colors.blueAccent),
