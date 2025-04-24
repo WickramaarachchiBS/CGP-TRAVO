@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:newone/Data/Hotel.dart';
+import 'package:newone/screens/location_hotel_screen.dart';
 
 class HotelsPage extends StatefulWidget {
   const HotelsPage({super.key});
@@ -197,43 +198,53 @@ class _HotelsPageState extends State<HotelsPage> {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-            child: imagePath.isNotEmpty
-                ? Image.network(
-                    imagePath,
-                    height: 120,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 120),
-                  )
-                : const Icon(Icons.broken_image, size: 120),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "${distance.toStringAsFixed(1)}km",
-                  style: const TextStyle(color: Colors.grey),
-                ),
-                Text(
-                  'LKR ${price.toInt()} per night',
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LocationScreenHotel(imagePath: imagePath),
             ),
-          ),
-        ],
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+              child: imagePath.isNotEmpty
+                  ? Image.network(
+                      imagePath,
+                      height: 120,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 120),
+                    )
+                  : const Icon(Icons.broken_image, size: 120),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "${distance.toStringAsFixed(1)}km",
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                  Text(
+                    'LKR ${price.toInt()} per night',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

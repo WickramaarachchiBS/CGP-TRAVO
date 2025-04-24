@@ -51,8 +51,8 @@ class MyApp extends StatelessWidget {
         '/allHotels': (context) => HotelsPage(),
         '/schedule': (context) => SchedulePage(),
         '/bookmarks': (context) => BookmarksScreen(),
-        '/locationHotel': (context) => LocationScreenHotel(),
-        'chatbot': (context) => ChatScreen(),
+        // '/locationHotel': (context) => LocationScreenHotel(),
+        '/chatbot': (context) => ChatScreen(),
         '/auth': (context) => AuthWrapper(),
       },
     );
