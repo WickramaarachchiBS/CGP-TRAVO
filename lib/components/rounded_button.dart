@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:newone/screens/booking_summary_screen.dart';
 
 class RoundedButton extends StatelessWidget {
   const RoundedButton({super.key});
@@ -10,16 +11,12 @@ class RoundedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           // Navigate to the map screen with the latitude and longitude
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => MapScreen(
-          //       latitude: widget.latitude,
-          //       longitude: widget.longitude,
-          //       name: widget.place,
-          //     ),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Summary(),
+            ),
+          );
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF176EF0)),

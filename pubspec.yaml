@@ -44,6 +44,8 @@ dependencies:
   intl: ^0.18.1
   cached_network_image: ^3.4.1
   http: ^1.3.0
+  syncfusion_flutter_datepicker: ^29.1.39
+  marquee: ^2.3.0
 
 dev_dependencies:
   flutter_test:

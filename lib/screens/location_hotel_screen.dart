@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:newone/components/hotel_facilities.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:newone/components/rounded_button.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:intl/intl.dart';
+import 'package:marquee/marquee.dart';
 
 class LocationScreenHotel extends StatefulWidget {
   const LocationScreenHotel({
@@ -25,6 +28,11 @@ class LocationScreenHotel extends StatefulWidget {
 
 class _LocationScreenHotelState extends State<LocationScreenHotel> {
   String _address = 'Fetching address...';
+  int numOfDays = 1;
+  DateTime? _checkInDate;
+  DateTime? _checkOutDate;
+  int _numberOfDays = 0;
+  double totalPrice = 0.0;
 
   @override
   void initState() {
@@ -55,6 +63,69 @@ class _LocationScreenHotelState extends State<LocationScreenHotel> {
     }
   }
 
+  // Function to calculate the total price based on the number of days
+  void _calculateTotalPrice() {
+    if (_checkInDate != null && _checkOutDate != null) {
+      int days = _checkOutDate!.difference(_checkInDate!).inDays;
+      setState(() {
+        totalPrice = days * double.parse(widget.price);
+        print(totalPrice);
+      });
+    }
+  }
+
+  // Function to show the date range picker dialog
+  void _pickDateRange() {
+    PickerDateRange? tempSelectedRange;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Select Check-In Check-Out Dates'),
+          content: SizedBox(
+            height: 350,
+            width: 350,
+            child: SfDateRangePicker(
+              onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                if (args.value is PickerDateRange) {
+                  tempSelectedRange = args.value;
+                }
+              },
+              selectionMode: DateRangePickerSelectionMode.range,
+              minDate: DateTime.now(),
+              initialSelectedRange: _checkInDate != null && _checkOutDate != null ? PickerDateRange(_checkInDate, _checkOutDate) : null,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (tempSelectedRange != null) {
+                  setState(() {
+                    _checkInDate = tempSelectedRange!.startDate;
+                    _checkOutDate = tempSelectedRange!.endDate;
+                    _calculateTotalPrice();
+
+                    if (_checkInDate != null && _checkOutDate != null) {
+                      _numberOfDays = _checkOutDate!.difference(_checkInDate!).inDays;
+                    } else {
+                      _numberOfDays = 0;
+                    }
+                  });
+                }
+                Navigator.pop(context);
+                print(_checkInDate);
+                print(_checkOutDate);
+                print(_numberOfDays);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +143,7 @@ class _LocationScreenHotelState extends State<LocationScreenHotel> {
           children: [
             Container(
               margin: EdgeInsets.symmetric(horizontal: 25.0),
-              height: MediaQuery.of(context).size.height * 0.47,
+              height: MediaQuery.of(context).size.height * 0.35,
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -110,10 +181,26 @@ class _LocationScreenHotelState extends State<LocationScreenHotel> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    widget.hotelName,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  Flexible(
+                    child: SizedBox(
+                      height: 25, // adjust based on font size
+                      child: Marquee(
+                        text: widget.hotelName,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        scrollAxis: Axis.horizontal,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        blankSpace: 20.0,
+                        velocity: 30.0,
+                        pauseAfterRound: Duration(seconds: 2),
+                        startPadding: 10.0,
+                        accelerationDuration: Duration(seconds: 1),
+                        accelerationCurve: Curves.linear,
+                        decelerationDuration: Duration(milliseconds: 500),
+                        decelerationCurve: Curves.easeOut,
+                      ),
+                    ),
                   ),
+                  const SizedBox(width: 5),
                   RichText(
                     text: TextSpan(
                       text: 'LKR.  ',
@@ -146,6 +233,30 @@ class _LocationScreenHotelState extends State<LocationScreenHotel> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 1),
+            const Divider(
+              color: Colors.grey,
+              height: 20,
+              thickness: 1,
+              indent: 20,
+              endIndent: 20,
+            ),
+            const SizedBox(height: 10),
+            // Date range picker button
+            TextButton(
+              onPressed: _pickDateRange,
+              child: Text(
+                _checkInDate != null && _checkOutDate != null
+                    ? 'Check-In: ${DateFormat('yyyy-MM-dd').format(_checkInDate!)} \nCheck-Out: ${DateFormat('yyyy-MM-dd').format(_checkOutDate!)}'
+                    : 'Select Dates',
+                style: const TextStyle(fontSize: 16, color: Colors.blue),
+              ),
+            ),
+            // Display number of days
+            Text(
+              _numberOfDays > 0 ? '$_numberOfDays ${_numberOfDays == 1 ? 'Day' : 'Days'}' : 'Select dates to see duration',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Spacer(),
             RoundedButton(),
