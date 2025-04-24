@@ -2,7 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:newone/screens/booking_summary_screen.dart';
 
 class RoundedButton extends StatelessWidget {
-  const RoundedButton({super.key});
+  const RoundedButton({
+    super.key,
+    required this.chkInDate,
+    required this.chkOutDate,
+    required this.numOfDays,
+    required this.totalPrice,
+    required this.hotelName,
+    required this.price,
+  });
+  final DateTime? chkInDate;
+  final DateTime? chkOutDate;
+  final int numOfDays;
+  final double totalPrice;
+  final String hotelName;
+  final String price;
 
   @override
   Widget build(BuildContext context) {
@@ -10,11 +24,27 @@ class RoundedButton extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 20.0, top: 3.0, left: 13.0, right: 13.0),
       child: ElevatedButton(
         onPressed: () {
+          if (chkInDate == null || chkOutDate == null) {
+            // Show an error message if dates are not selected
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Please select check-in and check-out dates.'),
+              ),
+            );
+            return;
+          }
           // Navigate to the map screen with the latitude and longitude
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Summary(),
+              builder: (context) => Summary(
+                chkInDate: chkInDate,
+                chkOutDate: chkOutDate,
+                numOfDays: numOfDays,
+                totalPrice: totalPrice,
+                hotelName: hotelName,
+                price: price,
+              ),
             ),
           );
         },

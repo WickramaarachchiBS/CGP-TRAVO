@@ -104,7 +104,6 @@ class _LocationScreenHotelState extends State<LocationScreenHotel> {
                   setState(() {
                     _checkInDate = tempSelectedRange!.startDate;
                     _checkOutDate = tempSelectedRange!.endDate;
-                    _calculateTotalPrice();
 
                     if (_checkInDate != null && _checkOutDate != null) {
                       _numberOfDays = _checkOutDate!.difference(_checkInDate!).inDays;
@@ -117,6 +116,7 @@ class _LocationScreenHotelState extends State<LocationScreenHotel> {
                 print(_checkInDate);
                 print(_checkOutDate);
                 print(_numberOfDays);
+                _calculateTotalPrice();
               },
               child: const Text('OK'),
             ),
@@ -258,8 +258,22 @@ class _LocationScreenHotelState extends State<LocationScreenHotel> {
               _numberOfDays > 0 ? '$_numberOfDays ${_numberOfDays == 1 ? 'Day' : 'Days'}' : 'Select dates to see duration',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+            const Divider(
+              color: Colors.grey,
+              height: 20,
+              thickness: 1,
+              indent: 20,
+              endIndent: 20,
+            ),
             Spacer(),
-            RoundedButton(),
+            RoundedButton(
+              chkInDate: _checkInDate,
+              chkOutDate: _checkOutDate,
+              numOfDays: _numberOfDays,
+              hotelName: widget.hotelName,
+              price: widget.price,
+              totalPrice: totalPrice,
+            ),
           ],
         ),
       ),
