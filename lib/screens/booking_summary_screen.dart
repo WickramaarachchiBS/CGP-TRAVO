@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:newone/screens/schedule_screen.dart';
 import 'package:newone/services/stripe_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Summary extends StatefulWidget {
   const Summary({
@@ -40,13 +43,38 @@ class _SummaryState extends State<Summary> {
           content: Text('Payment Successful!'),
         ),
       );
+      //add the booking to the database
+      _addBookingToDatabase();
+      // Navigate to the schedule page after successful payment
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SchedulePage()),
+      );
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Payment Failed!'),
+          content: Text('Payment Failed! Please try again.'),
         ),
       );
+    }
+  }
+
+  //add the booking to the database here
+  Future<void> _addBookingToDatabase() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final bookingData = {
+        'hotelName': widget.hotelName,
+        'price': widget.price,
+        'checkInDate': widget.chkInDate,
+        'checkOutDate': widget.chkOutDate,
+        'numOfDays': widget.numOfDays,
+        'totalPrice': widget.totalPrice,
+        'userId': user.uid,
+      };
+
+      await FirebaseFirestore.instance.collection('bookings').add(bookingData);
     }
   }
 
@@ -213,7 +241,6 @@ class _SummaryState extends State<Summary> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (!checkBoxState) {
-                        print('Checkbox not checked');
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Please accept the terms and conditions.'),
@@ -222,13 +249,7 @@ class _SummaryState extends State<Summary> {
                         return;
                       }
                       // Proceed with payment or booking confirmation
-                      print('Checkbox checked');
                       _handlePayment();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Booking Confirmed!'),
-                        ),
-                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
