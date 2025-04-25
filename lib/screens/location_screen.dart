@@ -6,6 +6,7 @@ import 'package:newone/Data/Bookmarks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:newone/services/weatherServices.dart';
+import 'dart:ui';
 
 class LocationScreen extends StatefulWidget {
   final String place;
@@ -252,41 +253,56 @@ class _LocationScreenState extends State<LocationScreen> {
                   ),
                   SizedBox(height: boxHeight * 0.55),
                   Container(
-                    color: Colors.teal[200],
                     margin: EdgeInsets.only(right: 20.0, left: 20.0),
                     height: boxHeight * 0.25,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20.0),
-                      //removed BackdropFilter because render problems wrap this to padding when testing on physical devices
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.place,
-                                style: TextStyle(
-                                  fontSize: widget.place.length > 20 ? 20.0 : 25.0,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20.0),
+                            border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 10.0,
+                                offset: Offset(5, 20),
                               ),
-                              Row(
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(
-                                    Icons.location_on_outlined,
-                                    color: Colors.white,
-                                    size: 20.0,
-                                  ),
                                   Text(
-                                    district,
-                                    style: TextStyle(fontSize: 15.0, color: Colors.white),
+                                    widget.place,
+                                    style: TextStyle(
+                                      fontSize: widget.place.length > 20 ? 20.0 : 25.0,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_on_outlined,
+                                        color: Colors.white,
+                                        size: 20.0,
+                                      ),
+                                      Text(
+                                        district,
+                                        style: TextStyle(fontSize: 15.0, color: Colors.white),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
