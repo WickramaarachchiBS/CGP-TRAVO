@@ -24,6 +24,8 @@ class Summary extends StatefulWidget {
 }
 
 class _SummaryState extends State<Summary> {
+  bool checkBoxState = false;
+
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('MMM dd, yyyy');
@@ -31,23 +33,20 @@ class _SummaryState extends State<Summary> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Booking Summary',
+          'Summary',
           style: TextStyle(
+            fontSize: 19,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.grey,
+        centerTitle: true,
         elevation: 0,
       ),
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blueAccent.shade100, Colors.white],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
+            color: Colors.grey[200],
           ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -57,11 +56,10 @@ class _SummaryState extends State<Summary> {
                 const SizedBox(height: 20),
                 Center(
                   child: Text(
-                    'Your Booking Details',
+                    'Confirm Your Booking...',
                     style: TextStyle(
-                      fontSize: 28,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent.shade700,
                     ),
                   ),
                 ),
@@ -130,7 +128,7 @@ class _SummaryState extends State<Summary> {
                             Icon(Icons.nights_stay, color: Colors.blueAccent, size: 24),
                             const SizedBox(width: 10),
                             Text(
-                              'Duration: ${widget.numOfDays} night${widget.numOfDays != 1 ? 's' : ''}',
+                              'Duration: ${widget.numOfDays} Day${widget.numOfDays != 1 ? 's' : ''}',
                               style: const TextStyle(fontSize: 18),
                             ),
                           ],
@@ -154,14 +152,58 @@ class _SummaryState extends State<Summary> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.info, color: Colors.blueAccent, size: 20),
+                      const Text(
+                        'Please review your booking details carefully.',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ],
+                  ),
+                ),
                 const Spacer(),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: checkBoxState,
+                      onChanged: (value) {
+                        setState(() {
+                          checkBoxState = value!;
+                        });
+                      },
+                      activeColor: Colors.blueAccent,
+                    ),
+                    Expanded(
+                      child: Text('Hereby I declare that I have read and accepted the terms and conditions.'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Add navigation or confirmation logic here
+                      if (!checkBoxState) {
+                        print('Checkbox not checked');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please accept the terms and conditions.'),
+                          ),
+                        );
+                        return;
+                      }
+                      // Proceed with payment or booking confirmation
+                      print('Checkbox checked');
+
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Booking Confirmed!')),
+                        const SnackBar(
+                          content: Text('Booking Confirmed!'),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -171,13 +213,20 @@ class _SummaryState extends State<Summary> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Confirm Booking',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.credit_card, color: Colors.white, size: 28),
+                        const SizedBox(width: 10),
+                        const Text(
+                          'Pay Now',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
