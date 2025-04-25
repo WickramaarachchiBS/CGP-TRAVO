@@ -16,9 +16,11 @@ class _ChatScreenState extends State<ChatScreen> {
   final Map<String, String> faqResponses = {
     'hello': 'Hi! How can I assist you today?',
     'hi': 'Hello! How can I assist you today?',
-    'help': 'I can answer FAQs or guide you. Try asking about "places", "bookmarks", "bookings", "logout","popular","navigation", or "hotels".',
+    'help':
+        'I can answer FAQs or guide you. Try asking about "places", "bookmarks", "bookings", "logout","popular","navigation", or "hotels". Use "add hotel" to add your business to our app',
     'places': 'Press the places button on home screen/categories.',
     'bookmarks': 'Press the Bookmarks button on home screen/categories.',
+    'add hotel': 'Please contact travo.business@gmail.com or call +94 77 2548965 for business inquiries.',
     'hotels': 'Press the Hotels button on home screen/categories.',
     'bookings': 'Press the My Schedule button on home screen/categories.',
     'logout': 'Press the profile icon on top of the home screen.',
@@ -82,6 +84,31 @@ class _ChatScreenState extends State<ChatScreen> {
           style: TextStyle(fontSize: 19),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.info),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Info'),
+                    content: Text(
+                        'To get chatbot assistance you can type help and send. \n\n Bussiness inquiries: travo.business@gmail.com \n\n For more information call us on \n+94 77 2548965'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Close the popup
+                        },
+                        child: Text('OK'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          )
+        ],
       ),
       body: SafeArea(
         child: Column(
