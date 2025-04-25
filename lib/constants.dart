@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 const kTextFieldDecoration = InputDecoration(
   hintText: 'Enter a value',
-  hintStyle: TextStyle(
-      color: Colors.black54, fontSize: 13.0, fontWeight: FontWeight.normal),
+  hintStyle: TextStyle(color: Colors.black54, fontSize: 13.0, fontWeight: FontWeight.normal),
   fillColor: Color(0xFFE0F7FA),
   filled: true,
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
