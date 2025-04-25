@@ -41,7 +41,7 @@ class _VerifyPageState extends State<VerifyPage> {
                       tag: 'logo',
                       child: Container(
                         child: Image.asset(
-                          'assets/7720738.png',
+                          'assets/logo.png',
                           height: 150,
                           width: 150,
                         ),
