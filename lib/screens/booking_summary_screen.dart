@@ -27,6 +27,29 @@ class Summary extends StatefulWidget {
 class _SummaryState extends State<Summary> {
   bool checkBoxState = false;
 
+  //STRIPE payment
+  Future<void> _handlePayment() async {
+    double amount = widget.totalPrice;
+    int amountInCents = (amount).toInt();
+    print(amountInCents);
+
+    try {
+      await StripeService().makePayment(amount: amountInCents, currency: 'LKR');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Payment Successful!'),
+        ),
+      );
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Payment Failed!'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('MMM dd, yyyy');
@@ -140,7 +163,7 @@ class _SummaryState extends State<Summary> {
                             Icon(Icons.account_balance_wallet, color: Colors.redAccent, size: 24),
                             const SizedBox(width: 10),
                             Text(
-                              'Total: \$${widget.totalPrice.toStringAsFixed(2)}',
+                              'Total: LKR ${widget.totalPrice.toStringAsFixed(2)}',
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -200,7 +223,7 @@ class _SummaryState extends State<Summary> {
                       }
                       // Proceed with payment or booking confirmation
                       print('Checkbox checked');
-
+                      _handlePayment();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Booking Confirmed!'),

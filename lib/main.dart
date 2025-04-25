@@ -15,6 +15,8 @@ import 'screens/login_page.dart';
 import 'screens/verify_page.dart';
 import 'screens/forgotpassword_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:newone/config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +29,7 @@ void main() async {
     print('Firebase initialization failed: $e');
   }
   await Firebase.initializeApp();
+  Stripe.publishableKey = stripePublishableKey;
   runApp(const MyApp());
 }
 
