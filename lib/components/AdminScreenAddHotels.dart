@@ -50,7 +50,7 @@ class AddHotelSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       child: Form(
         key: _formKey,
         child: Column(
@@ -62,10 +62,17 @@ class AddHotelSection extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               decoration: BoxDecoration(
-                color: const Color(0xffb9cfec),
-                border: Border.all(color: Colors.black),
+                color: const Color(0xffeaecb9),
+                border: Border.all(color: Color(0xff9ec2dc)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Column(
@@ -78,13 +85,13 @@ class AddHotelSection extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 15),
                   CustomTextField(controller: districtController, labelText: 'District', maxLines: 1),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   CustomTextField(controller: nameController, labelText: 'Hotel Name', maxLines: 1),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   CustomTextField(controller: imageUrlController, labelText: 'Image URL', maxLines: 1),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
@@ -96,9 +103,9 @@ class AddHotelSection extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   CustomTextField(controller: priceController, labelText: 'Price (per night)', maxLines: 1),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   Center(
                     child: ElevatedButton(
                       onPressed: () => _submitForm(context),

@@ -10,16 +10,6 @@ class AllBookingSection extends StatelessWidget {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Bookings',
-          style: TextStyle(
-            fontSize: 19,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: firestore.collection('bookings').snapshots(),
         builder: (context, snapshot) {
@@ -53,12 +43,13 @@ class AllBookingSection extends StatelessWidget {
               final totalPrice = booking['totalPrice']?.toString() ?? '0.0';
               final userId = booking['userId']?.toString() ?? 'Unknown';
 
-// Format dates
+              // Format dates
               final dateFormat = DateFormat('MMM dd, yyyy');
               final checkInDateStr = checkInDate != null ? dateFormat.format(checkInDate) : 'N/A';
               final checkOutDateStr = checkOutDate != null ? dateFormat.format(checkOutDate) : 'N/A';
 
               return Card(
+                color: Color(0xffaedfda),
                 margin: const EdgeInsets.symmetric(vertical: 5),
                 elevation: 3,
                 shape: RoundedRectangleBorder(
@@ -79,7 +70,7 @@ class AllBookingSection extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today, size: 16),
+                          const Icon(Icons.calendar_today_rounded, size: 16),
                           const SizedBox(width: 5),
                           Text(
                             'Check-In: $checkInDateStr',

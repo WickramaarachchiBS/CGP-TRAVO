@@ -53,7 +53,7 @@ class AddPlaceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       child: Form(
         key: _formKey,
         child: Column(
@@ -65,10 +65,17 @@ class AddPlaceSection extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               decoration: BoxDecoration(
-                color: const Color(0xffb9cfec),
-                border: Border.all(color: Colors.black),
+                color: const Color(0xff9ec2dc),
+                border: Border.all(color: Color(0xffdc9e9e)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Column(
@@ -81,15 +88,15 @@ class AddPlaceSection extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 15),
                   CustomTextField(controller: districtController, labelText: 'District', maxLines: 1),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   CustomTextField(controller: nameController, labelText: 'Place Name', maxLines: 1),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   CustomTextField(controller: addressController, labelText: 'Address', maxLines: 1),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   CustomTextField(controller: imageUrlController, labelText: 'Image URL', maxLines: 1),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
@@ -101,9 +108,9 @@ class AddPlaceSection extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   CustomTextField(controller: descriptionController, labelText: 'Description', maxLines: 3),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
                   Center(
                     child: ElevatedButton(
                       onPressed: () => _submitForm(context),
