@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     0, // Place Admin above Logout
                                     const PopupMenuItem<String>(
                                       value: 'admin',
-                                      child: Text('Admin'),
+                                      child: Text('Admin Panel'),
                                     ),
                                   );
                                 }
@@ -163,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Categories", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text("View all", style: TextStyle(color: Colors.blue)),
+                  Text("View all", style: TextStyle(fontSize: 13, color: Colors.blue)),
                 ],
               ),
               const SizedBox(height: 5),
