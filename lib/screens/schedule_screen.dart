@@ -55,12 +55,6 @@ class _SchedulePageState extends State<SchedulePage> {
           'My Schedule',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-        TextButton(
-          onPressed: () {
-            // Handle "See all" button press
-          },
-          child: const Text('See all', style: TextStyle(color: Colors.blue)),
-        ),
       ],
     );
   }

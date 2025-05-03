@@ -21,6 +21,12 @@ class AdminScreen extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/home');
+            },
+          ),
           centerTitle: true,
           actions: [
             Padding(

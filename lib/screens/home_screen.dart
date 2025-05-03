@@ -145,18 +145,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 20),
               // Search Bar
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Search for places...",
-                  prefixIcon: Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
+              // TextField(
+              //   decoration: InputDecoration(
+              //     hintText: "Search for places...",
+              //     prefixIcon: Icon(Icons.search),
+              //     filled: true,
+              //     fillColor: Colors.grey[200],
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(15),
+              //       borderSide: BorderSide.none,
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 20),
               // Categories Section
               Row(
