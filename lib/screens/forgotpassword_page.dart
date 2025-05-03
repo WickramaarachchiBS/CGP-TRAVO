@@ -31,7 +31,7 @@ class _ForgotPWPageState extends State<ForgotPWPage> {
                       tag: 'logo',
                       child: Container(
                         child: Image.asset(
-                          'assets/7720738.png',
+                          'assets/logo.png',
                           height: 150,
                           width: 150,
                         ),
@@ -101,7 +101,7 @@ class _ForgotPWPageState extends State<ForgotPWPage> {
                           onPressed: () {
                             bool isValidEmail = RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$').hasMatch(_emailController.text);
                             if (isValidEmail) {
-                              Navigator.pushNamed(context, '/Verify');
+                              Navigator.pushNamed(context, '/verify');
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:newone/screens/chatbot_screen.dart';
 import 'package:newone/screens/location_screen.dart';
 import 'package:newone/services/locationServices.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:newone/Data/Popular.dart';
-import 'package:newone/Data/Popular.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,11 +17,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? _address = 'Fetching address...';
+  String? _userName = 'User';
 
   @override
   void initState() {
     super.initState();
     _fetchUserAddress();
+    _fetchLoggedInUser();
+  }
+
+  Future<void> _fetchLoggedInUser() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        String email = user.email ?? 'User';
+        _userName = email.split('@').first;
+      });
+      print(_userName);
+    }
   }
 
   Future<void> _fetchUserAddress() async {
@@ -45,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
+    final User? user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -61,8 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Hi, User",
+                      Text(
+                        "Hi, $_userName",
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
@@ -79,37 +94,76 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Row(
                     children: [
-                      CircleAvatar(
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.person),
-                        ),
+                      FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance.collection('users').doc(user?.uid).get(),
+                        builder: (context, snapshot) {
+                          bool isAdmin = false;
+                          if (snapshot.hasData && snapshot.data!.exists) {
+                            isAdmin = snapshot.data!.get('role') == 'admin';
+                          }
+                          print('HomeScreen: User role isAdmin=$isAdmin, email=${user?.email}');
+
+                          return CircleAvatar(
+                            child: PopupMenuButton<String>(
+                              icon: const Icon(Icons.person),
+                              onSelected: (value) {
+                                if (value == 'logout') {
+                                  FirebaseAuth.instance.signOut();
+                                  Navigator.pushReplacementNamed(context, '/welcome');
+                                  print('Logged out');
+                                }
+                                if (value == 'admin') {
+                                  Navigator.pushReplacementNamed(context, '/admin');
+                                  print('Navigating to Admin Page');
+                                }
+                              },
+                              itemBuilder: (BuildContext context) {
+                                List<PopupMenuItem<String>> items = [
+                                  const PopupMenuItem<String>(
+                                    value: 'logout',
+                                    child: Text('Logout'),
+                                  ),
+                                ];
+                                if (isAdmin) {
+                                  items.insert(
+                                    0, // Place Admin above Logout
+                                    const PopupMenuItem<String>(
+                                      value: 'admin',
+                                      child: Text('Admin Panel'),
+                                    ),
+                                  );
+                                }
+                                return items;
+                              },
+                            ),
+                          );
+                        },
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
               // Search Bar
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Search for places...",
-                  prefixIcon: Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
+              // TextField(
+              //   decoration: InputDecoration(
+              //     hintText: "Search for places...",
+              //     prefixIcon: Icon(Icons.search),
+              //     filled: true,
+              //     fillColor: Colors.grey[200],
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(15),
+              //       borderSide: BorderSide.none,
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 20),
               // Categories Section
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Categories", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text("View all", style: TextStyle(color: Colors.blue)),
+                  Text("View all", style: TextStyle(fontSize: 13, color: Colors.blue)),
                 ],
               ),
               const SizedBox(height: 5),
@@ -117,8 +171,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildCategoryItem("Places", Icons.place, "/allPlaces"),
+                  _buildCategoryItem("Bookmarks", Icons.bookmark, "/bookmarks"),
                   _buildCategoryItem("Hotels", Icons.hotel, "/allHotels"),
-                  _buildCategoryItem("Schedule", Icons.schedule, "/schedule"),
+                  _buildCategoryItem("My Schedule", Icons.schedule, "/schedule"),
                 ],
               ),
               const SizedBox(height: 20),
@@ -160,11 +215,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     builder: (context) => LocationScreen(
                                       place: popular.name,
                                       imagePath: popular.imagePath,
-                                      latLon: "${popular.latitude}, ${popular.longitude}",
+                                      latitude: popular.latitude.toString(),
+                                      longitude: popular.longitude.toString(),
+                                      desc: popular.desc,
                                     ),
                                   ),
                                 );
                                 print("Tapped on ${popular.name}");
+                                print(popular.imagePath);
                               },
                               child: Container(
                                 margin: EdgeInsets.only(bottom: 10),
@@ -178,42 +236,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ],
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                                      child: CachedNetworkImage(
-                                        imageUrl: popular.imagePath,
-                                        height: 120,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) => Container(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey, width: 0.5),
+                                    borderRadius: BorderRadius.circular(15),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 5,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                                        child: CachedNetworkImage(
+                                          imageUrl: popular.imagePath,
                                           height: 120,
-                                          color: Colors.grey,
-                                          child: Center(child: Text('Image not found')),
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) => Container(
+                                            height: 120,
+                                            color: Colors.grey,
+                                            child: Center(child: Text('Image not found')),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            popular.name,
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                          ),
-                                          SizedBox(height: 4),
-                                          Text(
-                                            "${popular.distance} km",
-                                            style: TextStyle(color: Colors.grey),
-                                          ),
-                                        ],
+                                      Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              popular.name,
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                            ),
+                                            // SizedBox(height: 4),
+                                            // Text(
+                                            //   "${popular.distance} km",
+                                            //   style: TextStyle(color: Colors.grey),
+                                            // ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -228,7 +298,23 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+      floatingActionButton: SizedBox(
+        width: 65,
+        height: 65,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ChatScreen()),
+            );
+          },
+          backgroundColor: Colors.lightBlueAccent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Image.asset('assets/botImage.png'),
+        ),
+      ),
     );
   }
 
@@ -256,20 +342,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Bottom Navigation Bar
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: 0,
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favorites"),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-      ],
-    );
-  }
+  // Widget _buildBottomNavBar() {
+  //   return BottomNavigationBar(
+  //     currentIndex: 0,
+  //     type: BottomNavigationBarType.fixed,
+  //     selectedItemColor: Colors.blue,
+  //     unselectedItemColor: Colors.grey,
+  //     showSelectedLabels: false,
+  //     showUnselectedLabels: false,
+  //     items: const [
+  //       BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+  //       BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+  //       BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "Favorites"),
+  //       BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+  //     ],
+  //   );
+  // }
 }

@@ -6,6 +6,7 @@ class Popular {
   final double distance;
   final double latitude;
   final double longitude;
+  final String desc;
 
   Popular({
     required this.name,
@@ -13,6 +14,7 @@ class Popular {
     required this.distance,
     required this.latitude,
     required this.longitude,
+    required this.desc,
   });
 
   factory Popular.fromFirestore(Map<String, dynamic> data) {
@@ -22,6 +24,7 @@ class Popular {
       latitude: double.tryParse(data['latitude'].toString()) ?? 0.0,
       longitude: double.tryParse(data['longitude'].toString()) ?? 0.0,
       distance: double.tryParse(data['distance'].toString()) ?? 0.0,
+      desc: data['desc'] ?? '',
     );
   }
 }
