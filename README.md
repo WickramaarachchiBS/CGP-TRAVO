@@ -1,16 +1,15 @@
-# newone
+# Travo
 
-A new Flutter project.
+This is a full-stack travel planning app which allows users to browse through tourist attractions in Sri Lanka and book hotels for accomodations.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+## TechStack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Front-End - Flutter and Google Maps GUI.
+* Back-End - Dart, Firebase to handle server side logic.
+* Database & Cloud Storage - Firebase firestore to store data and ImageKit,io to store images.
+* Payment Integration - Stripe payment gateway for payments for bookings.
+* Admin Dashboard - Admin functionalities for managing places, hotels and view bookings.
+* APIs - OpenWeather, GoogleMapsAPI, Stripe
+* VCS - GitHub
